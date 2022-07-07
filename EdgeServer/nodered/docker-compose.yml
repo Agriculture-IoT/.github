@@ -1,0 +1,13 @@
+version: '3'
+services:
+  influxdb:
+    container_name: nodered
+    hostname: nodered
+    restart: always
+    image: nodered/node-red:2.2.2-12
+    volumes:
+      - /edgeserver/nodered/data:/data:rw
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=America/Los_Angeles

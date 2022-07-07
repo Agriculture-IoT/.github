@@ -1,0 +1,12 @@
+version: '3'
+services:
+  influxdb:
+    container_name: influxdb
+    hostname: influxdb
+    restart: always
+    image: influxdb:2.1.1-alpine
+    volumes:
+      - ./config.yml:/etc/influxdb2/config.yml
+      - /minimulus/influxdb:/var/lib/influxdb2:rw
+    ports:
+      - "8086:8086"
