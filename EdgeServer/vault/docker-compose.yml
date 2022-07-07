@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  rabbitmq:
+    image: vault:1.9.2
+    container_name: vault
+    hostname: vault
+    restart: always
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./data:/edgeserver/vault/data/
+      - ./etc/config.hcl:/etc/vault/config.hcl
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config=/etc/vault/config.hcl
