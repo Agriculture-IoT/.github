@@ -1,6 +1,6 @@
 version: '3'
 services:
-  influxdb:
+  nodered:
     container_name: nodered
     hostname: nodered
     restart: always

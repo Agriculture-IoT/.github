@@ -2,40 +2,60 @@
 
 This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberry foundation provided software tools.  
 
+
 ## Installing Headless OS
-1. Install and launch latest version of [RaspberryPi Imager](https://www.raspberrypi.com/software/)  
-   ![RaspberryPi Imager](../images/RaspberryPi/Raspberry%20Pi%20Imager.png)
+1. Install the [RaspberryPi Imager](https://www.raspberrypi.com/software/) and launch the application. 
+   <details>
+   <summary>Fig.1</summary>
 
-2. Select the latest version of RaspberryPi OS lite (64bit).
-    > Release date: April 4th 2022  
-    > System: 64-bit  
-    > Kernel version: 5.15  
-    > Debian version: 11 (bullseye)  
+   ![](../images/RaspberryPi/Raspberry%20Pi%20Imager.png)   
+   </details>
 
-    ![Raspibian OS Lite (64bit)](../images/RaspberryPi/Select_RaspberryPi_OS_Lite.png)
+2. Click on the **CHOOSE OS** button and select the latest version of RaspberryPi OS lite (64bit)
+   <details>
+   <summary>Fig.2</summary>
 
-3. Connect Micro SD card reader with 32GB (or larger) micro SD card, to your computer.
+   ![](../images/RaspberryPi/Select_RaspberryPi_OS_Lite.png)  
+   </details>
+   
+   > Release date: April 4th 2022  
+   > System: 64-bit  
+   > Kernel version: 5.15  
+   > Debian version: 11 (bullseye)  
+   
+3. Connect a Micro SD card reader with 32GB (or larger) micro SD card, to your computer.
 
-4. Select storage as the micro SD in RaspberryPi Imager.  
+4. Click on **CHOOSE STORAGE** button and select the micro SD.  
+   <details>
+   <summary>Fig.3</summary>
+
    ![Choose storage](../images/RaspberryPi/Choose%20Storage.png)  
+   </details>
+   
+5. Click on the gear icon to configure the Advanced Options. Set the ***Username***, ***Password***, ***SSID with password***, ***Wireless LAN country***, and ***Locate settings*** (Timezone).
+   <details>
+   <summary>Fig.4, 5, 6</summary>
 
-5. Click on the gear icon to configure the Advanced Options.  
    ![Advanced options](../images/RaspberryPi/Advanced%20options.png)  
-    > Remember to set ***Username***, ***Password***, ***SSID with password***, ***Wireless LAN country***, and ***Locate settings*** (Timezone).
 
    ![Username & Password](../images/RaspberryPi/set_username_password.png)
 
    ![LAN and Locate](../images/RaspberryPi/Wireless%20LAN%20and%20Timezone.png)  
+   </details>
    
-6. Verify all the options selected and click on ***Write*** button.  
+6. Verify all the options selected and click on Write button.  
+   <details>
+   <summary>Fig.7, 8</summary>
+
    ![Write](../images/RaspberryPi/Write.png)
     > Select ***yes*** to continue and follow the steps to complete OS installation.  
 
    ![Writing](../images/RaspberryPi/Writing.png)
+   </details>
     
 7. Eject the Micro SD card and insert into SD card slot of the RaspberryPi.
 
-8. Setup RaspberryPi board as documented in the **[Getting started](https://www.raspberrypi.com/documentation/computers/getting-started.html#installing-the-operating-system)** document. This RaspberryPi documentation also includes a video and description of network OS installation. 
+8.  Setup RaspberryPi board as documented in the **'Setting up your Raspberry Pi'** section of the ***[Getting started](https://www.raspberrypi.com/documentation/computers/getting-started.html)*** document. This RaspberryPi documentation also includes a video and description of network OS installation! 
 
 ---
 
@@ -43,10 +63,9 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
 
 First boot may take more than 5-10mins to complete. 
 
-
 > If a monitor is connected, the first boot output will be as below:
 >> <details>
->> <summary> Click to expand</summary>
+>> <summary> <= Click to expand</summary>
 >> 
 >> Starting Load/Save RF Kill Switch Status...   
 >> Started Network Tine Synchronization.  
@@ -130,33 +149,89 @@ First boot may take more than 5-10mins to complete.
 >> Last login: Mon Apr 4 07:41:54 PDT 2022 on top  
 >> pi@edgeserver01:~ $   
 >> </details>
-  
-  
-Run **'sudo nmap -sP < network subnet >'** command to detect the IP address and Mac address of the RaspberryPi Wireless adaptor.  
+<br>  
+
+Once the first boot is completed, ***thanks to mDNS*** IP can be found using this command:
 
 ```
-sudo nmap -sP '192.168.0.0/24' | awk '/^Nmap/{ip=$NF}/Raspberry/{print ip, "is the IP address of RaspberryPi with MAC Address", $3}'
-[sudo] password for atul:
-192.168.0.247 is the IP address of RaspberryPi with MAC Address DC:A6:32:C5:AB:BB
+dig -p 5353  @224.0.0.251 +short edgeserver01.local
 ```
 
-SSH to RaspberryPi using the Username and Password set in the Advanced options in previous section.
-In this example username 'pi' was created. [Read more](https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/) about recent security updates to Bullseye OS, where default username (**pi**) and password (**raspberry**) is now disabled. 
+Login with SSH to RaspberryPi using the Username and Password set in the Advanced options in previous section.
 
+> [Read more](https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/) about recent security updates to Bullseye OS. 
+
+
+Update network interfaces metrics in /etc/dhcpcd.conf by executing this command:
 
 ```
-ssh pi@192.168.0.247
-Warning: Permanently added '192.168.0.247' (ECDSA) to the list of known hosts.
-pi@192.168.0.247's password: 
-Linux edgeserver01 5.15.32-v8+ #1538 SMP PREEMPT Thu Mar 31 19:40:39 BST 2022 aarch64
+printf "interface wlan0
+metric 0
 
-The programs included with the Debian GNU/Linux system are free software;  
-the exact distribution terms for each program are described in the  
-individual files in /usr/share/doc/*/copyright.  
- 
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent  
-permitted by applicable law.  
-Last login: Wed Jul  6 00:22:40 2022  
+interface wwan0
+metric 0\n"| sudo tee -a /etc/dhcpcd.conf
 ```
 
-RaspberryPi Lite OS (64bit) is a debian based OS and comes with **apt** package manager. 
+Disable WiFi powersavings, MTP probe and Bluetooth of RaspberryPi by executing these commands and rebooting the board:
+
+```
+sudo sed -i '/exit\ 0/i \
+iw wlan0 set power_save off \
+iw dev wlan0 set power_save off \
+export MTP_NO_PROBE="1" \
+' /etc/rc.local
+
+sudo systemctl stop bluetooth.service bluetooth.target
+sudo systemctl disable bluetooth.service
+
+sudo reboot
+```
+
+Once reboot is completed login to RaspberryPi with SSH and install additional packages:
+```
+sudo bash -c 'printf "Acquire::ForceIPv4 \"true\";" > /etc/apt/apt.conf.d/99force-ipv4'
+
+export DEBIAN_FRONTEND=noninteractive
+
+sudo DEBIAN_FRONTEND=noninteractive apt update -y
+sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y
+
+sudo DEBIAN_FRONTEND=noninteractive apt install -y build-essential 
+sudo DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-pip
+sudo DEBIAN_FRONTEND=noninteractive apt install -y cmake libudev-dev
+sudo DEBIAN_FRONTEND=noninteractive apt install -y libusb-1.0-0-dev libffi-dev
+sudo DEBIAN_FRONTEND=noninteractive apt install -y libssl-dev git
+sudo DEBIAN_FRONTEND=noninteractive apt install -y minicom socat
+sudo DEBIAN_FRONTEND=noninteractive apt install -y libqmi-utils udhcpc mtr gnutls-bin
+sudo DEBIAN_FRONTEND=noninteractive apt install -y p7zip-full i2c-tools gpsd
+sudo DEBIAN_FRONTEND=noninteractive apt install -y mlocate vim 
+sudo DEBIAN_FRONTEND=noninteractive apt install -y docker
+sudo DEBIAN_FRONTEND=noninteractive apt install -y docker-compose
+
+sudo systemctl stop docker.service docker.socket
+sudo usermod -aG docker pi
+
+sudo systemctl start docker.service docker.socket
+sudo systemctl enable docker.service docker.socket
+```
+
+Create python environment
+```
+sudo mkdir /edgeserver
+sudo chown -R pi:pi /edgeserver
+
+python3 -m pip install virtualenv
+python3 -m virtualenv /edgeserver/.venv
+source /edgeserver/.venv/bin/activate
+pip install --upgrade pip
+pip install --upgrade setuptools
+export CFLAGS=-fcommon
+pip install RPi.GPIO
+
+sudo reboot
+```
+
+Disable auto login using **sudo raspi-config** and then restart RaspberryPi.
+
+---
+
