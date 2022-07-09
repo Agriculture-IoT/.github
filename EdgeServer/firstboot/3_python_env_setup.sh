@@ -3,9 +3,11 @@
 export DEBIAN_FRONTEND=noninteractive
 
 sudo apt update -y
-
 sudo DEBIAN_FRONTEND=noninteractive apt install -y build-essential python3
 sudo DEBIAN_FRONTEND=noninteractive apt install -y python3-pip git
+
+sudo mkdir /edgeserver
+sudo chown -R pi:pi /edgeserver
 
 python3 -m pip install virtualenv
 python3 -m virtualenv /edgeserver/.venv
