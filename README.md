@@ -5,7 +5,6 @@
 This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberry foundation provided software tools.  
 
 
-- [Collection of projects developed using commodity hardware and opensource software.](#collection-of-projects-developed-using-commodity-hardware-and-opensource-software)
 - [Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
   - [1. Installing Headless OS](#1-installing-headless-os)
   - [2. First Boot](#2-first-boot)
@@ -71,9 +70,10 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
 
 First boot may take more than 5-10mins to complete. 
 
-<details>
-<summary>If a monitor is connected, an output can be as below:</summary>
- 
+> If a monitor is connected;
+> <details>
+> <summary>console output may be similar to one below:</summary>
+>
 > Starting Load/Save RF Kill Switch Status...   
 > Started Network Tine Synchronization.  
 > [ OK ] Reached target System Initialization.  
@@ -179,7 +179,7 @@ interface wwan0
 metric 0\n"| sudo tee -a /etc/dhcpcd.conf
 ```
 
-**Step 3.** Disable WiFi powersavings, MTP probe and Bluetooth of RaspberryPi and then reboot:
+**Step 3.** Disable WiFi power_save, MTP probe and Bluetooth:
 
 ```
 sudo sed -i '/exit\ 0/i \
@@ -234,7 +234,6 @@ pip install --upgrade pip
 pip install --upgrade setuptools
 export CFLAGS=-fcommon
 pip install RPi.GPIO
-
 ```
 
 **Step 6.** Disable auto-login using **sudo raspi-config** and then restart RaspberryPi.
