@@ -29,14 +29,45 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
    ![](../images/RaspberryPi/Select_RaspberryPi_OS_Lite.png)  
    </details><br>
 
-**Step 3.** Connect a Micro SD card reader with 32GB (or larger) micro SD card, to your computer and click on **CHOOSE STORAGE** button to select the micro SD.  
+**Step 3.** Create new ssh-key pair
+
+```
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/pi_key
+```
+<pre>
+<details>  
+<summary>ssh-keygen output</summary>
+Generating public/private rsa key pair.  
+Enter passphrase (empty for no passphrase):  
+Enter same passphrase again:   
+Your identification has been saved in pi_key  
+Your public key has been saved in pi_key.pub  
+The key fingerprint is:  
+SHA256:jKtSGdXXZUsxXmbkdmPO0XguwleMxANdeVIO3RRmU+I atul@eklavya  
+The key's randomart image is:  
++---[RSA 2048]----+  
+|       .   ..=X%#|  
+|      . . . .*B/*|  
+|     .   .    E*@|  
+|    .  o   .  +=+|   
+|     o. S   o oo.|  
+|    o  .     o . |  
+|   .  .          |  
+|  .  .           |  
+|   ..            |  
++----[SHA256]-----+  
+</details></pre>
+
+**Step 4.** Connect a Micro SD card reader with 32GB (or larger) micro SD card, to your computer and click on **CHOOSE STORAGE** button to select the micro SD.  
    <details>
    <summary>Fig.3</summary>
 
    ![Choose storage](../images/RaspberryPi/Choose%20Storage.png)  
    </details><br>
    
-**Step 4.** Click on the gear icon to configure the Advanced Options. Set the ***Username***, ***Password***, ***SSID with password***, ***Wireless LAN country***, and ***Locate settings*** (Timezone).
+**Step 5.** Click on the gear icon to configure the Advanced Options.  
+Enable **Allow public-key authentication only** option in **Enable SSH** section with the new public key (~/.ssh/pi_key.pub).  
+Set the ***Username***, ***SSID with password***, ***Wireless LAN country***, and ***Locate settings*** (Timezone).  
    <details>
    <summary>Fig.4, 5, 6</summary>
 
@@ -47,7 +78,7 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
    ![LAN and Locate](../images/RaspberryPi/Wireless%20LAN%20and%20Timezone.png)  
    </details><br>
    
-**Step 5.** Verify all the options selected and click on Write button.  
+**Step 6.** Verify all the options selected and click on Write button.  
    <details>
    <summary>Fig.7, 8</summary>
 
@@ -57,7 +88,7 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
    ![Writing](../images/RaspberryPi/Writing.png)
    </details><br>
     
-**Step 6.** Once the writing is completed, insert the Micro SD in the SD card slot of the RaspberryPi and setup RaspberryPi board as documented in the **'Setting up your Raspberry Pi'** section of the ***[Getting started](https://www.raspberrypi.com/documentation/computers/getting-started.html)*** document. This RaspberryPi documentation also includes a video and description of network OS installation! 
+**Step 7.** Once the writing is completed, insert the Micro SD in the SD card slot of the RaspberryPi and setup RaspberryPi board as documented in the **'Setting up your Raspberry Pi'** section of the ***[Getting started](https://www.raspberrypi.com/documentation/computers/getting-started.html)*** document. This RaspberryPi documentation also includes a video and description of network OS installation! 
 <br>
 
 ---
