@@ -5,7 +5,7 @@
 This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberry foundation provided software tools.  
 
 
-- [Setting up Edge server with RaspberryPi 4B (8GB Ram)](#setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
+- [Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
   - [1. Installing Headless OS](#1-installing-headless-os)
   - [2. First Boot](#2-first-boot)
 
@@ -55,7 +55,8 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
    <summary>Fig.7, 8</summary>
 
    ![Write](images/RaspberryPi/Write.png)
-    > Select ***yes*** to continue and follow the steps to complete OS installation.  
+   
+   > Select ***yes*** to continue and follow the steps to complete OS installation.  
 
    ![Writing](images/RaspberryPi/Writing.png)
    </details><br>
@@ -69,9 +70,10 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
 
 First boot may take more than 5-10mins to complete. 
 
-<details>
-<summary>If a monitor is connected, the first boot output will be as below:</summary>
- 
+> If a monitor is connected;
+> <details>
+> <summary>console output may be similar to one below:</summary>
+>
 > Starting Load/Save RF Kill Switch Status...   
 > Started Network Tine Synchronization.  
 > [ OK ] Reached target System Initialization.  
@@ -156,7 +158,7 @@ First boot may take more than 5-10mins to complete.
 > 
 </details><br>  
 
-**Step 1.** Once the first boot is completed, ***thanks to mDNS*** IP can be found using this command:
+**Step 1.** After the first boot, thanks to mDNS, IP can be found using this command:
 
 ```
 dig -p 5353  @224.0.0.251 +short edgeserver01.local
@@ -167,7 +169,7 @@ Login with SSH to RaspberryPi using the Username and Password set in the Advance
 ssh pi@edgeserver01.local
 ```
 
-**Step 2.** Update network interfaces metrics in */etc/dhcpcd.conf*:
+**Step 2.** Update network interfaces metrics in */etc/dhcpcd.conf* of RaspberryPi:
 
 ```
 printf "interface wlan0
@@ -177,7 +179,7 @@ interface wwan0
 metric 0\n"| sudo tee -a /etc/dhcpcd.conf
 ```
 
-**Step 3.** Disable WiFi powersavings, MTP probe and Bluetooth of RaspberryPi and then reboot:
+**Step 3.** Disable WiFi power_save, MTP probe and Bluetooth:
 
 ```
 sudo sed -i '/exit\ 0/i \
@@ -192,7 +194,7 @@ sudo systemctl disable bluetooth.service
 sudo reboot
 ```
 
-**Step 4.** Once reboot is completed login to RaspberryPi with SSH and install these packages:
+**Step 4.** After the reboot, SSH login again to RaspberryPi and then run these commands:
 ```
 sudo bash -c 'printf "Acquire::ForceIPv4 \"true\";" > /etc/apt/apt.conf.d/99force-ipv4'
 
@@ -220,7 +222,7 @@ sudo systemctl start docker.service docker.socket
 sudo systemctl enable docker.service docker.socket
 ```
 
-**Step 5.** Create python environment
+**Step 5.** Create a python3 environment
 ```
 sudo mkdir /edgeserver
 sudo chown -R pi:pi /edgeserver
@@ -232,7 +234,6 @@ pip install --upgrade pip
 pip install --upgrade setuptools
 export CFLAGS=-fcommon
 pip install RPi.GPIO
-
 ```
 
 **Step 6.** Disable auto-login using **sudo raspi-config** and then restart RaspberryPi.
