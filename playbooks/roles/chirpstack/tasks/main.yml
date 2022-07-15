@@ -1,0 +1,22 @@
+- name: Ping host
+  ansible.builtin.ping:
+
+- name: Create directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    recurse: yes
+    owner: pi
+    group: pi
+  loop: 
+    - /edgeserver
+
+
+- name: copy files to remote
+  copy:
+    src: ../../../../EdgeServer/
+    dest: /edgeserver
+    owner: pi
+    group: pi
+

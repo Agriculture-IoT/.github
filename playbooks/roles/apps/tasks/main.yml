@@ -1,0 +1,32 @@
+- name: Create rabbitmq logs directory
+  ansible.builtin.file:
+    path: /edgeserver/rabbitmq/logs
+    state: directory
+    mode: '0777'
+    recurse: yes
+    owner: pi
+    group: pi
+
+- name: start rabbitmq
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/rabbitmq
+
+- name: start influxdb
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/influxdb
+
+- name: start nodered
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/nodered
+
+- name: start vault
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/vault
+
+# - name: start vault
+#   community.docker.docker_compose:
+#     project_src: /edgeserver/vault
