@@ -1,0 +1,52 @@
+- name: Ping host
+  ansible.builtin.ping:
+
+- name: Update /etc/dhcpcd.conf
+  ansible.builtin.lineinfile:
+    path: /etc/dhcpcd.conf
+    insertafter: EOF
+    line: |
+      interface wlan0
+      metric 0
+      interface wwan0
+      metric 0
+
+- name: Disable WiFi power_save
+  ansible.builtin.lineinfile:
+    path: /etc/rc.local
+    regexp: '^exit 0'
+    insertbefore: 'exit 0'
+    line: |
+      iw wlan0 set power_save off
+      iw dev wlan0 set power_save off
+      export MTP_NO_PROBE="1"
+
+      exit 0
+
+- name: Update /etc/apt/apt.conf.d/99force-ipv4
+  ansible.builtin.lineinfile:
+    path: /etc/apt/apt.conf.d/99force-ipv4
+    insertafter: EOF
+    line: |
+      Acquire::ForceIPv4 "true";
+    create: yes
+
+- name: Disable bluetooth systemd
+  ansible.builtin.lineinfile:
+    path: /boot/config.txt
+    insertafter: EOF
+    line: |
+      dtoverlay=disable-bt
+
+- name: Disable console autologin
+  ansible.builtin.file:
+    path: "/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+    state: absent
+
+- name: reboot pi
+  ansible.builtin.reboot:
+
+- name: Wait for reboot
+  ansible.builtin.wait_for_connection:
+    delay: 10
+    timeout: 300
