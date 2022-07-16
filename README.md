@@ -10,7 +10,6 @@ This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberr
   - [2.2. First Boot](#22-first-boot)
   - [<pre>](#pre)
 
-
 ---
 
 ## 2.1. Installing Headless OS
