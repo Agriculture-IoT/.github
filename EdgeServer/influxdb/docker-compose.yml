@@ -1,10 +1,14 @@
-version: '3'
+version: "3.3"
 services:
   influxdb:
     container_name: influxdb
     hostname: influxdb
     restart: always
     image: influxdb:2.1.1-alpine
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - ./config.yml:/etc/influxdb2/config.yml
       - /minimulus/influxdb:/var/lib/influxdb2:rw
