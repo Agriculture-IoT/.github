@@ -1,18 +1,12 @@
-# 1. Collection of projects developed using commodity hardware and opensource software.
-
-
-# 2. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)
-This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberry foundation provided software tools.  
-
-- [1. Collection of projects developed using commodity hardware and opensource software.](#1-collection-of-projects-developed-using-commodity-hardware-and-opensource-software)
-- [2. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#2-stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
-  - [2.1. Installing Headless OS](#21-installing-headless-os)
-  - [2.2. First Boot](#22-first-boot)
-  - [<pre>](#pre)
+# 1. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)
+- [1. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#1-stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
+  - [1.1. Installing Headless OS](#11-installing-headless-os)
+  - [1.2. First Boot](#12-first-boot)
+  - [1.3. Login to RabbitMQ, InfluxDB, and NodeRed](#13-login-to-rabbitmq-influxdb-and-nodered)
 
 ---
 
-## 2.1. Installing Headless OS
+## 1.1. Installing Headless OS
 
 **Step 1.** Install the [RaspberryPi Imager](https://www.raspberrypi.com/software/) and launch the application. 
    <details>
@@ -99,7 +93,7 @@ Set the ***Username***, ***SSID with password***, ***Wireless LAN country***, an
 
 ---
 
-## 2.2. First Boot 
+## 1.2. First Boot 
 
 First boot may take more than 5-10mins to complete. 
 
@@ -207,7 +201,8 @@ ssh  -i ~/.ssh/pi pi@edgeserver01.local
 
 **Step 2.** Clone this repository locally
 
-Logout from SSH session. In the this step RaspberryPi OS will be updated to disable Bluetooth, disable console autologin, disable wifi power saving, update apt packages and upgrade OS, install dependencies, install Docker engine, update pi user, and then setup LoRaWAN gateway with RakWireless RAK7371 WisGate Developer Base.
+Logout from SSH session and clone this github repository locally.
+
 ```
 git clone https://github.com/Agriculture-IoT/SmartAgriculture.git
 cd SmartAgriculture/
@@ -242,28 +237,30 @@ ls -alh
 cat edgeserver.yml
 ```
 
-Update the *`ansible_user`* and *`ansible_ssh_private_key_file`* if different values were used while [Installing Headless OS](#21-installing-headless-os) as shown in Fig.5
+Update the *`ansible_user`* and *`ansible_ssh_private_key_file`* in edeserver.yml if different values were used while [Installing Headless OS](#21-installing-headless-os) as shown in Fig.5
 
-<pre>
----
-- name: edgeserver setup
-  hosts: all
-  gather_facts: false
-  vars:
-    ansible_user: pi
-    ansible_ssh_private_key_file: ~/.ssh/pi_key
-  roles:
-    - firstboot
-    - base
-    - apps
-    - chirpstack
-  become: true
-  become_method: sudo
-  environment: 
-    DEBIAN_FRONTEND: noninteractive
-</pre>
+```
+---  
+- name: edgeserver setup  
+  hosts: all  
+  gather_facts: false  
+  vars:  
+    ansible_user: pi  
+    ansible_ssh_private_key_file: ~/.ssh/pi_key  
+  roles:  
+    - firstboot  
+    - base  
+    - apps  
+    - chirpstack 
+  become: true  
+  become_method: sudo  
+  environment:   
+    DEBIAN_FRONTEND: noninteractive  
+```
 
+Run the playbook
 ```  
+python3 -m pip install ansible
 ansible-playbook edgeserver.yml -i edgeserver01.local,    
 ```
 
@@ -357,9 +354,22 @@ edgeserver01.local         : ok=26   changed=19   unreachable=0    failed=0    s
 </details>    
 </pre>
 
-**Step 4.** Login to RabbitMQ 
+During execution of the ansible playbook in step, Raspberry Pi will reboot once and RaspberryPi OS will be updated to disable Bluetooth, disable console autologin, disable wifi power saving, update apt packages and upgrade OS, install dependencies, install Docker engine, update pi user, and then setup LoRaWAN gateway with RakWireless RAK7371 WisGate Developer Base.
 
-RabbitMQ management UI is configured to port 15672. Lauch this url in the preferred web browser and use `aguser` and `W3lc0m3!` credentials to login.
+## 1.3. Login to RabbitMQ, InfluxDB, and NodeRed 
+
+RabbitMQ management UI is configured with port 15672. Lauch this url in the preferred web browser and use `aguser` and `W3lc0m3!` credentials to login.
+MQTT is also enabled with same credentials with port 1833! 
 
 > [http://edgeserver01.local:15672/](http://edgeserver01.local:15672/)  
 > ![RabbitMQ](images/RaspberryPi/rabbitmq_login.png)
+
+InfluxDB is configured with port 8086.
+
+> [http://edgeserver01.local:8086](images/RaspberryPi/InfluxDB.png)  
+> ![InfluxDB](images/RaspberryPi/InfluxDB.png)  
+
+NodeRed is configured with port 1880.
+
+> [http://edgeserver01.local:1880](http://edgeserver01.local:1880)  
+> ![NodeRed](images/RaspberryPi/NodeRed.png)  
