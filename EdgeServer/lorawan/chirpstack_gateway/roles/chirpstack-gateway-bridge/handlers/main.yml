@@ -1,4 +1,0 @@
-- name: restart chirpstack-gateway-bridge
-  service:
-    name: chirpstack-gateway-bridge
-    state: restarted
