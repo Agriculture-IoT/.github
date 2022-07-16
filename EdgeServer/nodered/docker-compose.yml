@@ -5,6 +5,10 @@ services:
     hostname: nodered
     restart: always
     image: nodered/node-red:2.2.2-12
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     volumes:
       - /edgeserver/nodered/data:/data:rw
     ports:

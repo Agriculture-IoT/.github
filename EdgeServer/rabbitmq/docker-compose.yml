@@ -1,9 +1,13 @@
 version: "3.3"
 services:
   rabbitmq:
-    image: rabbitmq:3.10.6-management
     container_name: rabbitmq
     hostname: rabbitmq
+    image: rabbitmq:3.10.6-management
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
     restart: always
     ports:
       - "8883:1883"

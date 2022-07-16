@@ -1,0 +1,26 @@
+version: '2.0'
+services:
+  udp-packet-forwarder:
+    container_name: udp-packet-forwarder
+    image: rakwireless/udp-packet-forwarder:v1.1.3
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    privileged: true
+    network_mode: host
+    environment:
+      MODEL: "RAK7371"
+      MODULE:        "RAK5146"
+      CONCENTRATOR:  "SX1303"
+      HAS_GPS: "0"
+      INTERFACE: "USB"
+      GATEWAY_EUI: "26E804FFFE7093C0"
+      # SERVER: "eu1.cloud.thethings.network"
+      # PORT: "1700"
+      RADIO_DEV: "/dev/ttyACM0"
+      GATEWAY_EUI_NIC: "usb0"
+      BAND: "us_902_928"
+      GPS_LATITUDE: "35.995951"
+      GPS_LONGITUDE: "-115.126651"
