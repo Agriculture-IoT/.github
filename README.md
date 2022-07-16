@@ -243,7 +243,7 @@ ls -alh
 cat edgeserver.yml
 ```
 
-Update the *`ansible_user`* and *`ansible_ssh_private_key_file`* if different values were used while [Installing Headless OS](#1-installing-headless-os) as shown in Fig.5
+Update the *`ansible_user`* and *`ansible_ssh_private_key_file`* if different values were used while [Installing Headless OS](#21-installing-headless-os) as shown in Fig.5
 
 <pre>
 ---
