@@ -1,17 +1,19 @@
-# Collection of projects developed using commodity hardware and opensource software.
+# 1. Collection of projects developed using commodity hardware and opensource software.
 
 
-# Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)
+# 2. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)
 This document covers steps to install RaspberryPi Lite OS (64bit) using Raspberry foundation provided software tools.  
 
+- [1. Collection of projects developed using commodity hardware and opensource software.](#1-collection-of-projects-developed-using-commodity-hardware-and-opensource-software)
+- [2. Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#2-stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
+  - [2.1. Installing Headless OS](#21-installing-headless-os)
+  - [2.2. First Boot](#22-first-boot)
+  - [<pre>](#pre)
 
-- [Stage 1. Setting up Edge server with RaspberryPi 4B (8GB Ram)](#stage-1-setting-up-edge-server-with-raspberrypi-4b-8gb-ram)
-  - [1. Installing Headless OS](#1-installing-headless-os)
-  - [2. First Boot](#2-first-boot)
 
 ---
 
-## 1. Installing Headless OS
+## 2.1. Installing Headless OS
 
 **Step 1.** Install the [RaspberryPi Imager](https://www.raspberrypi.com/software/) and launch the application. 
    <details>
@@ -98,7 +100,7 @@ Set the ***Username***, ***SSID with password***, ***Wireless LAN country***, an
 
 ---
 
-## 2. First Boot 
+## 2.2. First Boot 
 
 First boot may take more than 5-10mins to complete. 
 
@@ -190,87 +192,175 @@ First boot may take more than 5-10mins to complete.
 > 
 </details><br>  
 
-**Step 1.** After the first boot, thanks to mDNS, IP can be found using this command:
+**Step 1.** SSH after first boot
+
+Once the board is ready, thanks to mDNS, IP of RaspberryPi can be found using this command:
 
 ```
 dig -p 5353  @224.0.0.251 +short edgeserver01.local
 ```
+
 Login with SSH to RaspberryPi using the Username and Password set in the Advanced options in previous section. [Read more](https://www.raspberrypi.com/news/raspberry-pi-bullseye-update-april-2022/) about recent security updates to Bullseye OS. 
 
 ```
-ssh pi@edgeserver01.local
+ssh  -i ~/.ssh/pi pi@edgeserver01.local
 ```
 
-**Step 2.** Update network interfaces metrics in */etc/dhcpcd.conf* of RaspberryPi:
+**Step 2.** Clone this repository locally
 
+Logout from SSH session. In the this step RaspberryPi OS will be updated to disable Bluetooth, disable console autologin, disable wifi power saving, update apt packages and upgrade OS, install dependencies, install Docker engine, update pi user, and then setup LoRaWAN gateway with RakWireless RAK7371 WisGate Developer Base.
 ```
-printf "interface wlan0
-metric 0
-
-interface wwan0
-metric 0\n"| sudo tee -a /etc/dhcpcd.conf
+git clone https://github.com/Agriculture-IoT/SmartAgriculture.git
+cd SmartAgriculture/
+tree -L 2
 ```
+After cloning the github repository, content of the directory should be as shown below. 
 
-**Step 3.** Disable WiFi power_save, MTP probe and Bluetooth:
+<pre>
+.
+├── EdgeServer
+│   ├── firstboot
+│   ├── influxdb
+│   ├── nodered
+│   ├── rabbitmq
+│   ├── README.md
+│   └── vault
+├── images
+│   ├── Rakwireless
+│   └── RaspberryPi
+├── LICENSE
+├── playbooks
+│   ├── edgeserver.yml
+│   ├── README.md
+│   └── roles
+└── README.md
+</pre>
 
+**Step 3.** Run ansible playbook
 ```
-sudo sed -i '/exit\ 0/i \
-iw wlan0 set power_save off \
-iw dev wlan0 set power_save off \
-export MTP_NO_PROBE="1" \
-' /etc/rc.local
-
-sudo systemctl stop bluetooth.service bluetooth.target
-sudo systemctl disable bluetooth.service
-
-sudo reboot
-```
-
-**Step 4.** After the reboot, SSH login again to RaspberryPi and then run these commands:
-```
-sudo bash -c 'printf "Acquire::ForceIPv4 \"true\";" > /etc/apt/apt.conf.d/99force-ipv4'
-
-export DEBIAN_FRONTEND=noninteractive
-
-sudo DEBIAN_FRONTEND=noninteractive apt update -y
-sudo DEBIAN_FRONTEND=noninteractive apt upgrade -y
-
-sudo DEBIAN_FRONTEND=noninteractive apt install -y build-essential 
-sudo DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-pip
-sudo DEBIAN_FRONTEND=noninteractive apt install -y cmake libudev-dev
-sudo DEBIAN_FRONTEND=noninteractive apt install -y libusb-1.0-0-dev libffi-dev
-sudo DEBIAN_FRONTEND=noninteractive apt install -y libssl-dev git
-sudo DEBIAN_FRONTEND=noninteractive apt install -y minicom socat
-sudo DEBIAN_FRONTEND=noninteractive apt install -y libqmi-utils udhcpc mtr gnutls-bin
-sudo DEBIAN_FRONTEND=noninteractive apt install -y p7zip-full i2c-tools gpsd
-sudo DEBIAN_FRONTEND=noninteractive apt install -y mlocate vim 
-sudo DEBIAN_FRONTEND=noninteractive apt install -y docker
-sudo DEBIAN_FRONTEND=noninteractive apt install -y docker-compose
-
-sudo systemctl stop docker.service docker.socket
-sudo usermod -aG docker pi
-
-sudo systemctl start docker.service docker.socket
-sudo systemctl enable docker.service docker.socket
+cd playbook
+ls -alh
+cat edgeserver.yml
 ```
 
-**Step 5.** Create a python3 environment
-```
-sudo mkdir /edgeserver
-sudo chown -R pi:pi /edgeserver
+Update the *`ansible_user`* and *`ansible_ssh_private_key_file`* if different values were used while [Installing Headless OS](#1-installing-headless-os) as shown in Fig.5
 
-python3 -m pip install virtualenv
-python3 -m virtualenv /edgeserver/.venv
-source /edgeserver/.venv/bin/activate
-pip install --upgrade pip
-pip install --upgrade setuptools
-export CFLAGS=-fcommon
-pip install RPi.GPIO
-```
-
-**Step 6.** Disable auto-login using **sudo raspi-config** and then restart RaspberryPi.
-
-> Optional Step: Configure key based authentication for SSH.
-
+<pre>
 ---
+- name: edgeserver setup
+  hosts: all
+  gather_facts: false
+  vars:
+    ansible_user: pi
+    ansible_ssh_private_key_file: ~/.ssh/pi_key
+  roles:
+    - firstboot
+    - base
+    - apps
+    - chirpstack
+  become: true
+  become_method: sudo
+  environment: 
+    DEBIAN_FRONTEND: noninteractive
+</pre>
 
+```  
+ansible-playbook edgeserver.yml -i edgeserver01.local,    
+```
+
+<pre>
+<details>  
+<summary>Playbook output</summary>
+PLAY [edgeserver setup] *********************************************************************************************************************************************************
+
+TASK [base : Ping host] *********************************************************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [base : Update /etc/dhcpcd.conf] *******************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : Disable WiFi power_save] *******************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : Update /etc/apt/apt.conf.d/99force-ipv4] ***************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : Disable bluetooth systemd] *****************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : Disable console autologin] *****************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : reboot pi] *********************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [base : Wait for reboot] ***************************************************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [lorabasics : Ping host] ***************************************************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [lorabasics : Update apt cache] ********************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [lorabasics : Install required packages for this project] ******************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [lorabasics : apt upgrade] *************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [lorabasics : Remove useless packages from the cache] **********************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [lorabasics : Remove dependencies that are no longer required] *************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [lorabasics : apt clean] ***************************************************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [lorabasics : Stop docker services] ****************************************************************************************************************************************
+changed: [edgeserver01.local] => (item=docker.service)
+changed: [edgeserver01.local] => (item=docker.socket)
+
+TASK [lorabasics : Add docker group to user pi] *********************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [lorabasics : Start and Enable docker services] ****************************************************************************************************************************
+changed: [edgeserver01.local] => (item=docker.service)
+ok: [edgeserver01.local] => (item=docker.socket)
+
+TASK [chirpstack : Ping host] ***************************************************************************************************************************************************
+ok: [edgeserver01.local]
+
+TASK [chirpstack : Create directory] ********************************************************************************************************************************************
+changed: [edgeserver01.local] => (item=/edgeserver)
+
+TASK [chirpstack : copy files to remote] ****************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [apps : Create rabbitmq logs directory] ************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [apps : start rabbitmq] ****************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [apps : start influxdb] ****************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [apps : start nodered] *****************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+TASK [apps : start vault] *******************************************************************************************************************************************************
+changed: [edgeserver01.local]
+
+PLAY RECAP **********************************************************************************************************************************************************************
+edgeserver01.local         : ok=26   changed=19   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+</details>    
+</pre>
+
+**Step 4.** Login to RabbitMQ 
+
+RabbitMQ management UI is configured to port 15672. Lauch this url in the preferred web browser and use `aguser` and `W3lc0m3!` credentials to login.
+
+> [http://edgeserver01.local:15672/](http://edgeserver01.local:15672/)  
+> ![RabbitMQ](images/RaspberryPi/rabbitmq_login.png)
