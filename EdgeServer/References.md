@@ -1,4 +1,4 @@
-# Appedix of references used in this project:
+# Appendix of references used in this project:
 
 1. [Basics™ Station on RAK WisGate Developer Gateways](https://news.rakwireless.com/basics-station-on-rak-wisgate-developer-gateways/)
 2. [RAKWireless udp_packet_forwarder](https://hub.docker.com/r/rakwireless/udp-packet-forwarder)

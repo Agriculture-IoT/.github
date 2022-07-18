@@ -1,16 +1,22 @@
-version: "3.3"
+version: "3.6"
+networks:
+  loranet:
+    external: true
 services:
   influxdb:
+    image: influxdb:2.1.1-alpine
     container_name: influxdb
     hostname: influxdb
     restart: always
-    image: influxdb:2.1.1-alpine
     logging:
       options:
         max-size: "10m"
         max-file: "3"
     volumes:
-      - ./config.yml:/etc/influxdb2/config.yml
-      - /minimulus/influxdb:/var/lib/influxdb2:rw
+      - /edgeserver/influxdb/config.yml:/etc/influxdb2/config.yml
+      - /edgeserver/influxdb:/var/lib/influxdb2:rw
     ports:
       - "8086:8086"
+    networks:
+      loranet:
+        # ipv4_address: 172.19.0.4

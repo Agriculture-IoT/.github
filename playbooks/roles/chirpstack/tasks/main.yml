@@ -1,4 +1,21 @@
 - name: Ping host
   ansible.builtin.ping:
 
+- name: Pause for 1 minute before UDP and GW
+  ansible.builtin.pause:
+    seconds: 60
 
+- name: start gatewaybridge
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/gatewaybridge
+
+- name: start udp packet forwarder
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/udp_packet_forwarder
+
+- name: start nodered
+  ansible.builtin.command: docker-compose up -d
+  args:
+    chdir: /edgeserver/nodered
