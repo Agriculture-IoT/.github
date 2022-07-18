@@ -1,0 +1,97 @@
+# See https://www.chirpstack.io/gateway-bridge/install/config/ for a full
+# configuration example and documentation.
+
+[general]
+log_level=3
+log_to_syslog=false
+
+[filters]
+net_ids=[
+]
+join_euis=[
+]
+
+# Gateway backend configuration.
+[backend]
+type="semtech_udp"
+
+  [backend.semtech_udp]
+  udp_bind = "0.0.0.0:1700"
+  skip_crc_check = false
+  fake_rx_time=false
+
+  [backend.concentratord]
+  crc_check=true
+
+  event_url="ipc:///tmp/concentratord_event"
+  command_url="ipc:///tmp/concentratord_command"
+
+  # Basic Station backend.
+  [backend.basic_station]
+  bind=":3001"
+  tls_cert=""
+  tls_key=""
+  ca_cert=""
+
+  stats_interval="30s"
+  ping_interval="1m0s"
+  timesync_interval="1h0m0s"
+  read_timeout="1m5s"
+  write_timeout="1s"
+
+  region="US915"
+
+  # Minimal frequency (Hz).
+  frequency_min=902000000
+
+  # Maximum frequency (Hz).
+  frequency_max=928000000
+
+# Integration configuration.
+[integration]
+# marshaler="protobuf"
+marshaler="json"
+
+  [integration.mqtt]
+  event_topic_template="gateway/{{ .GatewayID }}/event/{{ .EventType }}"
+  state_topic_template="gateway/{{ .GatewayID }}/state/{{ .StateType }}"
+  command_topic_template="farm"
+  state_retained=true
+  keep_alive="30s"
+  max_reconnect_interval="1m0s"
+  terminate_on_connect_error=false
+
+  # MQTT authentication.
+  [integration.mqtt.auth]
+  type="generic"
+    [integration.mqtt.auth.generic]
+    servers=[
+      "tcp://rabbitmq:1883",
+    ]
+    username="gwuser"
+    password="W3lc0m3"
+    qos=0
+    clean_session=true
+    client_id="66C0A7FC63D30000"
+    ca_cert=""
+    tls_cert=""
+    tls_key=""
+
+# Metrics configuration.
+[metrics]
+  [metrics.prometheus]
+  endpoint_enabled=false
+  bind=""
+
+[meta_data]
+  [meta_data.static]
+   serial_number="A1B21234"
+
+  [meta_data.dynamic]
+  execution_interval="1m0s"
+  max_execution_duration="1s"
+  split_delimiter="="
+
+  [meta_data.dynamic.commands]
+
+[commands]

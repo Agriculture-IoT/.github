@@ -1,19 +1,21 @@
-version: "3.3"
+version: "3.6"
+networks:
+  loranet:
+    external: true
 services:
   vault:
+    image: vault:1.9.2
     container_name: vault
     hostname: vault
-    image: vault:1.9.2
-    logging:
-      options:
-        max-size: "10m"
-        max-file: "3"
     restart: always
-    ports:
-      - "8200:8200"
     volumes:
-      - ./data:/edgeserver/vault/data/
-      - ./etc/config.hcl:/etc/vault/config.hcl
+      - /edgeserver/vault/data:/edgeserver/vault/data/
+      - /edgeserver/vault/etc/config.hcl:/etc/vault/config.hcl
     cap_add:
       - IPC_LOCK
     entrypoint: vault server -config=/etc/vault/config.hcl
+    ports:
+      - "8200:8200"
+    networks:
+      loranet:
+        # ipv4_address: 172.19.0.2

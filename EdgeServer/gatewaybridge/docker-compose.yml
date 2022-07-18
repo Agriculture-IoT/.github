@@ -1,0 +1,23 @@
+version: '3.6'
+networks:
+  loranet:
+    external: true
+services:
+  chirpstack-gateway-bridge:
+    image: chirpstack/chirpstack-gateway-bridge:3.14.0
+    container_name: gatewaybridge
+    hostname: gatewaybridge
+    restart: always
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "1700:1700/udp"
+    volumes:
+      - /edgeserver/gatewaybridge/chirpstack-gateway-bridge.toml:/etc/chirpstack-gateway-bridge/chirpstack-gateway-bridge.toml
+      - /edgeserver/gatewaybridge/data:/var/lib/gw_bridge
+      - /edgeserver/gatewaybridge/logs:/var/log/gw_bridge
+    networks:
+      loranet:
+        # ipv4_address: 172.19.0.5

@@ -28,6 +28,11 @@
     owner: pi
     group: pi
 
+- name: Create docker network loranet
+  ansible.builtin.command: docker network create --driver=bridge --subnet=172.19.0.0/24 loranet
+  args:
+    chdir: /edgeserver/
+
 - name: start rabbitmq
   ansible.builtin.command: docker-compose up -d
   args:
@@ -37,16 +42,6 @@
   ansible.builtin.command: docker-compose up -d
   args:
     chdir: /edgeserver/influxdb
-
-- name: start nodered
-  ansible.builtin.command: docker-compose up -d
-  args:
-    chdir: /edgeserver/nodered
-
-- name: start udp packet forwarder
-  ansible.builtin.command: docker-compose up -d
-  args:
-    chdir: /edgeserver/udp_packet_forwarder
 
 - name: start vault
   ansible.builtin.command: docker-compose up -d

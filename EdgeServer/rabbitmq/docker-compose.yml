@@ -1,21 +1,27 @@
-version: "3.3"
+version: "3.6"
+networks:
+  loranet:
+    external: true
 services:
   rabbitmq:
+    image: rabbitmq:3.10.6-management
     container_name: rabbitmq
     hostname: rabbitmq
-    image: rabbitmq:3.10.6-management
+    restart: always
     logging:
       options:
         max-size: "10m"
         max-file: "3"
-    restart: always
+    volumes:
+      - /edgeserver/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - /edgeserver/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - /edgeserver/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - /edgeserver/rabbitmq/data:/var/lib/rabbitmq
+      - /edgeserver/rabbitmq/logs:/var/log/rabbitmq
     ports:
-      - "8883:1883"
+      - "1883:1883"
       - "5672:5672"
       - "15672:15672"
-    volumes:
-      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./definitions.json:/etc/rabbitmq/definitions.json
-      - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
-      - ./data:/var/lib/rabbitmq
-      - ./logs:/var/log/rabbitmq
+    networks:
+      loranet:
+        # ipv4_address: 172.19.0.3
