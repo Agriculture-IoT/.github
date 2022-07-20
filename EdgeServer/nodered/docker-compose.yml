@@ -1,4 +1,7 @@
-version: '3'
+version: '3.6'
+networks:
+  loranet:
+    external: true
 services:
   nodered:
     container_name: nodered
@@ -11,6 +14,8 @@ services:
         max-file: "3"
     volumes:
       - /edgeserver/nodered/data:/data:rw
+    networks:
+      loranet:
     ports:
       - "1880:1880"
     environment:

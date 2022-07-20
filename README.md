@@ -213,21 +213,33 @@ After cloning the github repository, content of the directory should be as shown
 <pre>
 .
 ├── EdgeServer
-│   ├── firstboot
-│   ├── influxdb
-│   ├── nodered
-│   ├── rabbitmq
-│   ├── README.md
-│   └── vault
+│   ├── docker-compose.yml
+│   ├── firstboot
+│   ├── gatewaybridge
+│   ├── influxdb
+│   ├── nodered
+│   ├── rabbitmq
+│   ├── README.md
+│   ├── References.md
+│   ├── udp_packet_forwarder
+│   └── vault
 ├── images
-│   ├── Rakwireless
-│   └── RaspberryPi
+│   ├── Rakwireless
+│   └── RaspberryPi
+├── IoT_devices
+│   └── References.md
 ├── LICENSE
 ├── playbooks
-│   ├── edgeserver.yml
-│   ├── README.md
-│   └── roles
-└── README.md
+│   ├── edgeserver.yml
+│   ├── group_vars
+│   ├── host_vars
+│   ├── README.md
+│   └── roles
+├── profile
+├── README.md
+└── unseal_vault.sh
+
+17 directories, 9 files
 </pre>
 
 **Step 3.** Run ansible playbook
