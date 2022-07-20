@@ -227,6 +227,8 @@ After cloning the github repository, content of the directory should be as shown
 │   ├── Rakwireless
 │   └── RaspberryPi
 ├── IoT_devices
+│   ├── RAK113100
+│   ├── README.md
 │   └── References.md
 ├── LICENSE
 ├── playbooks
@@ -239,7 +241,7 @@ After cloning the github repository, content of the directory should be as shown
 ├── README.md
 └── unseal_vault.sh
 
-17 directories, 9 files
+18 directories, 10 files
 </pre>
 
 **Step 3.** Run ansible playbook

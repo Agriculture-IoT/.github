@@ -13,7 +13,7 @@
 - name: start udp packet forwarder
   ansible.builtin.command: docker-compose up -d
   args:
-    chdir: /edgeserver/udp_packet_forwarder
+    chdir: /edgeserver/packetforwarder
 
 - name: start nodered
   ansible.builtin.command: docker-compose up -d
