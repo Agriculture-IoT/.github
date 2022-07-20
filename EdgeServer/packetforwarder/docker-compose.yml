@@ -14,6 +14,8 @@ services:
         max-file: "3"
     privileged: true
     # network_mode: host
+    volumes:
+      - /edgeserver/packetforwarder/global_config.json:/app/global_config.json:ro
     environment:
       MODEL: "RAK7371"
       MODULE: "RAK5146"
