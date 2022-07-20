@@ -20,7 +20,7 @@ services:
       CONCENTRATOR: "SX1303"
       HAS_GPS: "0"
       INTERFACE: "USB"
-      GATEWAY_EUI: "26E804FFFE7093C0"
+      GATEWAY_EUI: "66c0a7fc63d30000"
       SERVER_HOST: "gatewaybridge"
       SERVER_PORT: "1700"
       RADIO_DEV: "/dev/ttyACM0"

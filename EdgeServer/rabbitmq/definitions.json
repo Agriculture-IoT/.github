@@ -1,38 +1,37 @@
 {
-  "rabbit_version": "3.10.6",
-  "rabbitmq_version": "3.10.6",
   "policies": [],
   "global_parameters": [],
   "parameters": [],
+  "users": [
+    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "gwuser", "password_hash": "LJBCmIgCg+SMXTxrHJ6YujLdUNjYpEfMzK5C76D+cTMWX7bj", "tags": [ "administrator" ] },
+    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "aguser", "password_hash": "KVbdnjeVBguFxgFwRHMKxUaOQ3+v+XbsxzNz+Cyi60fnU2y8", "tags": [ "administrator" ] },
+    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "guest", "password_hash": "WITokPGQV3ZoMHWE2TeAXd9nWmRdzL777JhSIoiynpNA+g1k", "tags": [ "administrator" ] }
+  ],
   "vhosts": [
-    { "limits": [], "metadata": { "description": "", "tags": []}, "name": "/"}
+    { "limits": [], "metadata": { "description": "", "tags": [] }, "name": "/" }
+  ],
+  "permissions": [
+    { "configure": ".*", "read": ".*", "user": "guest", "vhost": "/", "write": ".*" },
+    { "configure": ".*", "read": ".*", "user": "aguser", "vhost": "/", "write": ".*" },
+    { "configure": ".*", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*" }
   ],
   "exchanges": [
     { "arguments": {}, "auto_delete": false, "durable": true, "name": "farm", "type": "topic", "vhost": "/" }
   ],
   "queues": [
-    { "arguments": {}, "auto_delete": false, "durable": true, "name": "farm", "type": "classic", "vhost": "/"},
-    { "arguments": {}, "auto_delete":true, "durable":false, "name":"mqtt-subscription-66C0A7FC63D30000qos0", "type":"classic", "vhost":"/"}
-  ],
-  "bindings": [
-    { "arguments": {}, "destination": "farm", "destination_type": "queue", "routing_key": "*", "source": "farm", "vhost": "/"},
-    { "arguments": {}, "destination": "farm", "destination_type": "queue", "routing_key": "*", "source": "amq.topic", "vhost": "/"},
-    { "arguments": {}, "destination": "farm", "destination_type": "queue", "routing_key": "farm", "source": "amq.topic", "vhost": "/"},
-    { "arguments": {}, "destination":"mqtt-subscription-66C0A7FC63D30000qos0", "destination_type":"queue", "routing_key":"farm.gateway.66c0a7fc63d30000.command.#", "source":"amq.topic", "vhost":"/"}
-  ],
-  "permissions": [
-    { "configure": ".*", "read": ".*", "user": "guest", "vhost": "/", "write": ".*"},
-    { "configure": ".*", "read": ".*", "user": "aguser", "vhost": "/", "write": ".*"},
-    { "configure": ".*", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*"}
+    { "arguments": {}, "auto_delete": false, "durable": true, "type": "classic", "vhost": "/", "name": "farm" },
+    { "arguments": {}, "auto_delete": false, "durable": true, "type": "classic", "vhost": "/", "name": "gateway" }
   ],
   "topic_permissions": [
-    { "exchange": "", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*"},
-    { "exchange": "*", "read": ".*", "user": "aguser", "vhost": "/", "write": ".*"},
-    { "exchange": "farm", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*"}
+    { "exchange": "*", "read": ".*", "user": "aguser", "vhost": "/", "write": ".*" },
+    { "exchange": "", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*" },
+    { "exchange": "farm", "read": ".*", "user": "gwuser", "vhost": "/", "write": ".*" }
   ],
-  "users": [
-    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "gwuser", "password_hash": "LJBCmIgCg+SMXTxrHJ6YujLdUNjYpEfMzK5C76D+cTMWX7bj", "tags": [ "administrator" ]},
-    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "aguser", "password_hash": "KVbdnjeVBguFxgFwRHMKxUaOQ3+v+XbsxzNz+Cyi60fnU2y8", "tags": [ "administrator" ]},
-    { "hashing_algorithm": "rabbit_password_hashing_sha256", "limits": {}, "name": "guest", "password_hash": "WITokPGQV3ZoMHWE2TeAXd9nWmRdzL777JhSIoiynpNA+g1k", "tags": [ "administrator" ]}
+  "bindings": [
+    { "arguments": {}, "destination": "farm", "destination_type": "queue", "source": "farm", "vhost": "/", "routing_key": "*" },
+    { "arguments": {}, "destination": "farm", "destination_type": "queue", "source": "amq.topic", "vhost": "/", "routing_key": "*" },
+    { "arguments": {}, "destination": "gateway", "destination_type": "queue", "source": "amq.topic", "vhost": "/", "routing_key": "gateway.*" },
+    { "arguments": {}, "destination": "gateway", "destination_type": "queue", "source": "amq.topic", "vhost": "/", "routing_key": "gateway.*.*" },
+    { "arguments": {}, "destination": "gateway", "destination_type": "queue", "source": "amq.topic", "vhost": "/", "routing_key": "gateway.*.*.*" }
   ]
 }
